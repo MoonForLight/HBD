@@ -41,18 +41,18 @@
 
   <button onclick="playMusic()">Putar Musik 🎵</button>
 
-  <!-- Hidden YouTube audio iframe -->
-  <div id="yt-wrapper" style="display: none;">
-    <iframe id="yt-audio" src="" allow="autoplay" allowfullscreen></iframe>
-  </div>
+  <div id="yt-wrapper"></div>
 
   <script>
     function playMusic() {
-      const yt = document.getElementById("yt-audio");
-      const videoId = "Zjc-o9W6fLk"; // ID dari YouTube video
-
-      yt.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
-      document.getElementById("yt-wrapper").style.display = "block";
+      const wrapper = document.getElementById("yt-wrapper");
+      const videoId = "Zjc-o9W6fLk";
+      wrapper.innerHTML = `
+        <iframe id="yt-audio"
+          src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}"
+          allow="autoplay"
+          allowfullscreen></iframe>
+      `;
     }
   </script>
 
