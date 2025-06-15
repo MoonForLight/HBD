@@ -4,191 +4,144 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Selamat Ulang Tahun!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
   <style>
+    *{margin:0;padding:0;box-sizing:border-box}
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: #fff;
       overflow: hidden;
     }
-
     .container {
       position: relative;
       z-index: 2;
+      max-width: 600px;
+      margin: 100px auto 50px;
       text-align: center;
-      padding-top: 100px;
-      color: #333;
     }
-
     h1 {
       font-size: 3rem;
-      animation: bounce 1s infinite alternate;
+      margin-bottom: 0.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
+    h1 .moon { font-size: 3.5rem; margin-right: 10px; }
     #typewriter {
-      font-size: 1.3rem;
-      margin-top: 20px;
-      white-space: nowrap;
+      font-size: 1.2rem;
       overflow: hidden;
-      border-right: 3px solid #333;
+      white-space: nowrap;
+      border-right: 2px solid #fff;
       width: 0;
-      animation: typing 5s steps(40, end) forwards, blink 0.75s step-end infinite;
+      margin: 0 auto 1.5em;
+      animation: typing 4s steps(40,end) forwards, blink 0.8s step-end infinite;
     }
-
     button {
-      margin-top: 30px;
-      padding: 10px 25px;
-      font-size: 1rem;
-      background-color: #ff6b81;
-      color: white;
+      padding: 12px 30px;
+      background: #fff;
+      color: #000;
+      font-weight: 600;
       border: none;
-      border-radius: 8px;
+      border-radius: 30px;
       cursor: pointer;
+      transition: .3s;
     }
-
     button:hover {
-      background-color: #ff4757;
+      box-shadow: 0 0 15px #fff, 0 0 30px #fff;
+      transform: scale(1.05);
     }
-
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-10px); }
-    }
-
-    @keyframes typing {
-      to { width: 100%; }
-    }
-
-    @keyframes blink {
-      50% { border-color: transparent; }
-    }
-
-    canvas {
+    canvas, #tsparticles { position: fixed; top:0;left:0; width:100%;height:100%;pointer-events:none;z-index:1 }
+    .confetti {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
+      top: -2em; font-size:1.5rem;
+      animation: dropConfetti 3s linear forwards;
+      z-index:2; pointer-events:none;
     }
-
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: white;
-      font-size: 1.2em;
-      animation: fall linear infinite;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
-    }
+    @keyframes typing { to{width:100%} }
+    @keyframes blink {50%{border-color:transparent}}
+    @keyframes dropConfetti { to{transform: translateY(100vh); opacity:0}}
   </style>
 </head>
 <body>
 
 <canvas id="fireworks"></canvas>
+<div id="tsparticles"></div>
 
 <div class="container">
-  <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
-  <div id="typewriter">Untuk kamu yang spesial, semoga panjang umur dan bahagia selalu 💖</div>
-  <button onclick="playMusic()">Putar Musik 🎵</button>
+  <h1><span class="moon">🌙</span>Selamat Ulang Tahun!</h1>
+  <div id="typewriter">Semoga malammu tenang seperti cahaya bulan sabit ✨</div>
+  <button onclick="playAll()">Putar Musik & Seru-seruan 🎵</button>
   <div id="yt-wrapper"></div>
 </div>
 
-<!-- Fireworks -->
+<!-- Particle.js -->
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.bundle.min.js"></script>
 <script>
-  const canvas = document.getElementById("fireworks");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  let fireworks = [];
-
-  function Firework(x, y) {
-    this.x = x;
-    this.y = y;
-    this.particles = [];
-    for (let i = 0; i < 100; i++) {
-      this.particles.push(new Particle(x, y));
+  tsParticles.load("tsparticles", {
+    fullScreen:{enable:true,zIndex:1},
+    particles:{
+      number:{value:60},
+      size:{value:3,random:{min:1,max:4}},
+      move:{enable:true,speed:1},
+      color:{value:"#fff"},
+      opacity:{value:0.5}
     }
-  }
-
-  function Particle(x, y) {
-    this.x = x;
-    this.y = y;
-    this.radius = 2;
-    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    this.speed = Math.random() * 5;
-    this.angle = Math.random() * 2 * Math.PI;
-    this.gravity = 0.05;
-    this.alpha = 1;
-  }
-
-  Particle.prototype.update = function () {
-    this.x += Math.cos(this.angle) * this.speed;
-    this.y += Math.sin(this.angle) * this.speed + this.gravity;
-    this.alpha -= 0.01;
-  };
-
-  function animate() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    fireworks.forEach((fw, index) => {
-      fw.particles.forEach(p => {
-        p.update();
-        ctx.globalAlpha = p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = p.color;
-        ctx.fill();
-      });
-      if (fw.particles[0].alpha <= 0) fireworks.splice(index, 1);
-    });
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-
-  canvas.addEventListener("click", e => {
-    fireworks.push(new Firework(e.clientX, e.clientY));
   });
 </script>
 
-<!-- Snowfall -->
+<!-- Fireworks -->
 <script>
-  function createSnowflake() {
-    const flake = document.createElement("div");
-    flake.classList.add("snowflake");
-    flake.innerText = "❄";
-    flake.style.left = Math.random() * window.innerWidth + "px";
-    flake.style.animationDuration = 5 + Math.random() * 5 + "s";
-    flake.style.opacity = Math.random();
-    document.body.appendChild(flake);
-    setTimeout(() => flake.remove(), 10000);
+  const canvas = document.getElementById("fireworks"), ctx = canvas.getContext("2d");
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  let fireworks = [];
+  function Firework(x,y){this.x=x;this.y=y;this.p=[];for(let i=0;i<80;i++)this.p.push(new Particle(x,y))}
+  function Particle(x,y){
+    this.x=x;this.y=y;this.r=2;
+    this.color=`hsl(200,100%,80%)`;
+    this.sp=Math.random()*4;this.ang=Math.random()*2*Math.PI;
+    this.gr=0.04;this.a=1;
   }
-
-  setInterval(createSnowflake, 200);
+  Particle.prototype.update=function(){
+    this.x+=Math.cos(this.ang)*this.sp;
+    this.y+=Math.sin(this.ang)*this.sp+this.gr;
+    this.a-=0.015;
+  };
+  function anim(){
+    ctx.fillStyle="rgba(0,0,0,0.1)";ctx.fillRect(0,0,canvas.width,canvas.height);
+    fireworks.forEach((fw,i)=>{
+      fw.p.forEach(p=>{
+        p.update();
+        ctx.globalAlpha=p.a;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+        ctx.fillStyle=p.color;ctx.fill();
+      });
+      if(fw.p[0].a<=0)fireworks.splice(i,1);
+    });
+    requestAnimationFrame(anim);
+  }
+  anim();
+  canvas.addEventListener("click", e=>fireworks.push(new Firework(e.clientX,e.clientY)));
 </script>
 
-<!-- Music -->
+<!-- Main Script: Confetti | Music -->
 <script>
-  function playMusic() {
+  function playAll(){
+    // Musik via YouTube Embed
     const wrapper = document.getElementById("yt-wrapper");
-    const videoId = "Zjc-o9W6fLk";
-    wrapper.innerHTML = `
-      <iframe
-        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&rel=0"
-        allow="autoplay"
-        style="width:0;height:0;border:0;"></iframe>
-    `;
+    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0" allow="autoplay" style="width:0;height:0;border:0;"></iframe>`;
+
+    // Confetti Jakarta 🎊
+    for(let i=0;i<30;i++){
+      const c = document.createElement("div");
+      c.className="confetti";
+      c.style.left=Math.random()*100+"vw";
+      c.style.fontSize=(Math.random()*10+10)+"px";
+      c.innerText = ["✨","🎊","🌟"][Math.floor(Math.random()*3)];
+      document.body.append(c);
+      setTimeout(()=>c.remove(),3000);
+    }
   }
 </script>
 
