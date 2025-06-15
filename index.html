@@ -6,9 +6,9 @@
   <title>Selamat Ulang Tahun!</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
+      font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #ffecd2, #fcb69f);
       overflow: hidden;
     }
@@ -27,7 +27,7 @@
     }
 
     #typewriter {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       margin-top: 20px;
       white-space: nowrap;
       overflow: hidden;
@@ -68,8 +68,10 @@
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
       pointer-events: none;
-      z-index: 1;
     }
 
     .snowflake {
@@ -92,104 +94,103 @@
 </head>
 <body>
 
-  <canvas id="fireworks"></canvas>
+<canvas id="fireworks"></canvas>
 
-  <div class="container">
-    <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
-    <p id="typewriter">Untuk kamu yang spesial, semoga panjang umur dan bahagia selalu 💖</p>
-    <button onclick="playMusic()">Putar Musik 🎵</button>
-    <div id="yt-wrapper"></div>
-  </div>
+<div class="container">
+  <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
+  <div id="typewriter">Untuk kamu yang spesial, semoga panjang umur dan bahagia selalu 💖</div>
+  <button onclick="playMusic()">Putar Musik 🎵</button>
+  <div id="yt-wrapper"></div>
+</div>
 
-  <!-- Fireworks effect -->
-  <script>
-    const canvas = document.getElementById("fireworks");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+<!-- Fireworks -->
+<script>
+  const canvas = document.getElementById("fireworks");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-    let fireworks = [];
+  let fireworks = [];
 
-    function Firework(x, y) {
-      this.x = x;
-      this.y = y;
-      this.particles = [];
-      for (let i = 0; i < 100; i++) {
-        this.particles.push(new Particle(x, y));
-      }
+  function Firework(x, y) {
+    this.x = x;
+    this.y = y;
+    this.particles = [];
+    for (let i = 0; i < 100; i++) {
+      this.particles.push(new Particle(x, y));
     }
+  }
 
-    function Particle(x, y) {
-      this.x = x;
-      this.y = y;
-      this.radius = 2;
-      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-      this.speed = Math.random() * 5;
-      this.angle = Math.random() * 2 * Math.PI;
-      this.gravity = 0.05;
-      this.alpha = 1;
-    }
+  function Particle(x, y) {
+    this.x = x;
+    this.y = y;
+    this.radius = 2;
+    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    this.speed = Math.random() * 5;
+    this.angle = Math.random() * 2 * Math.PI;
+    this.gravity = 0.05;
+    this.alpha = 1;
+  }
 
-    Particle.prototype.update = function () {
-      this.x += Math.cos(this.angle) * this.speed;
-      this.y += Math.sin(this.angle) * this.speed + this.gravity;
-      this.alpha -= 0.01;
-    };
+  Particle.prototype.update = function () {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed + this.gravity;
+    this.alpha -= 0.01;
+  };
 
-    function animate() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      fireworks.forEach((firework, index) => {
-        firework.particles.forEach((particle, i) => {
-          particle.update();
-          ctx.globalAlpha = particle.alpha;
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.radius, 0, 2 * Math.PI);
-          ctx.fillStyle = particle.color;
-          ctx.fill();
-        });
-        if (firework.particles[0].alpha <= 0) {
-          fireworks.splice(index, 1);
-        }
+  function animate() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fireworks.forEach((fw, index) => {
+      fw.particles.forEach(p => {
+        p.update();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = p.color;
+        ctx.fill();
       });
-      requestAnimationFrame(animate);
-    }
-
-    canvas.addEventListener("click", (e) => {
-      fireworks.push(new Firework(e.clientX, e.clientY));
+      if (fw.particles[0].alpha <= 0) fireworks.splice(index, 1);
     });
+    requestAnimationFrame(animate);
+  }
 
-    animate();
-  </script>
+  animate();
 
-  <!-- Snowfall effect -->
-  <script>
-    function createSnowflake() {
-      const snowflake = document.createElement("div");
-      snowflake.classList.add("snowflake");
-      snowflake.innerText = "❄";
-      snowflake.style.left = Math.random() * window.innerWidth + "px";
-      snowflake.style.animationDuration = 5 + Math.random() * 5 + "s";
-      snowflake.style.opacity = Math.random();
-      document.body.appendChild(snowflake);
-      setTimeout(() => snowflake.remove(), 10000);
-    }
-    setInterval(createSnowflake, 200);
-  </script>
+  canvas.addEventListener("click", e => {
+    fireworks.push(new Firework(e.clientX, e.clientY));
+  });
+</script>
 
-  <!-- YouTube Audio Embed -->
-  <script>
-    function playMusic() {
-      const wrapper = document.getElementById("yt-wrapper");
-      const videoId = "Zjc-o9W6fLk";
-      wrapper.innerHTML = `
-        <iframe
-          src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}"
-          allow="autoplay"
-          style="width:0;height:0;border:0;"></iframe>
-      `;
-    }
-  </script>
+<!-- Snowfall -->
+<script>
+  function createSnowflake() {
+    const flake = document.createElement("div");
+    flake.classList.add("snowflake");
+    flake.innerText = "❄";
+    flake.style.left = Math.random() * window.innerWidth + "px";
+    flake.style.animationDuration = 5 + Math.random() * 5 + "s";
+    flake.style.opacity = Math.random();
+    document.body.appendChild(flake);
+    setTimeout(() => flake.remove(), 10000);
+  }
+
+  setInterval(createSnowflake, 200);
+</script>
+
+<!-- Music -->
+<script>
+  function playMusic() {
+    const wrapper = document.getElementById("yt-wrapper");
+    const videoId = "Zjc-o9W6fLk";
+    wrapper.innerHTML = `
+      <iframe
+        src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&rel=0"
+        allow="autoplay"
+        style="width:0;height:0;border:0;"></iframe>
+    `;
+  }
+</script>
 
 </body>
 </html>
