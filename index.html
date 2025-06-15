@@ -7,13 +7,38 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
       background: linear-gradient(to right, #ffecd2, #fcb69f);
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
       text-align: center;
       padding-top: 100px;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 3rem;
+      animation: bounce 1s infinite alternate;
+    }
+
+    #typewriter {
+      font-size: 1.5rem;
+      margin-top: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid #333;
+      width: 0;
+      animation: typing 5s steps(40, end) forwards, blink 0.75s step-end infinite;
     }
 
     button {
-      padding: 10px 20px;
+      margin-top: 30px;
+      padding: 10px 25px;
       font-size: 1rem;
       background-color: #ff6b81;
       color: white;
@@ -26,32 +51,142 @@
       background-color: #ff4757;
     }
 
-    #yt-audio {
-      width: 0;
-      height: 0;
-      border: 0;
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    @keyframes typing {
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: white;
+      font-size: 1.2em;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
-  <p>Untuk <strong>[Nama Kamu]</strong></p>
-  <p>Semoga bahagia selalu 💖</p>
+  <canvas id="fireworks"></canvas>
 
-  <button onclick="playMusic()">Putar Musik 🎵</button>
+  <div class="container">
+    <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
+    <p id="typewriter">Untuk kamu yang spesial, semoga panjang umur dan bahagia selalu 💖</p>
+    <button onclick="playMusic()">Putar Musik 🎵</button>
+    <div id="yt-wrapper"></div>
+  </div>
 
-  <div id="yt-wrapper"></div>
+  <!-- Fireworks effect -->
+  <script>
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
+    let fireworks = [];
+
+    function Firework(x, y) {
+      this.x = x;
+      this.y = y;
+      this.particles = [];
+      for (let i = 0; i < 100; i++) {
+        this.particles.push(new Particle(x, y));
+      }
+    }
+
+    function Particle(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = 2;
+      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      this.speed = Math.random() * 5;
+      this.angle = Math.random() * 2 * Math.PI;
+      this.gravity = 0.05;
+      this.alpha = 1;
+    }
+
+    Particle.prototype.update = function () {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed + this.gravity;
+      this.alpha -= 0.01;
+    };
+
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach((firework, index) => {
+        firework.particles.forEach((particle, i) => {
+          particle.update();
+          ctx.globalAlpha = particle.alpha;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = particle.color;
+          ctx.fill();
+        });
+        if (firework.particles[0].alpha <= 0) {
+          fireworks.splice(index, 1);
+        }
+      });
+      requestAnimationFrame(animate);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      fireworks.push(new Firework(e.clientX, e.clientY));
+    });
+
+    animate();
+  </script>
+
+  <!-- Snowfall effect -->
+  <script>
+    function createSnowflake() {
+      const snowflake = document.createElement("div");
+      snowflake.classList.add("snowflake");
+      snowflake.innerText = "❄";
+      snowflake.style.left = Math.random() * window.innerWidth + "px";
+      snowflake.style.animationDuration = 5 + Math.random() * 5 + "s";
+      snowflake.style.opacity = Math.random();
+      document.body.appendChild(snowflake);
+      setTimeout(() => snowflake.remove(), 10000);
+    }
+    setInterval(createSnowflake, 200);
+  </script>
+
+  <!-- YouTube Audio Embed -->
   <script>
     function playMusic() {
       const wrapper = document.getElementById("yt-wrapper");
       const videoId = "Zjc-o9W6fLk";
       wrapper.innerHTML = `
-        <iframe id="yt-audio"
+        <iframe
           src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}"
           allow="autoplay"
-          allowfullscreen></iframe>
+          style="width:0;height:0;border:0;"></iframe>
       `;
     }
   </script>
