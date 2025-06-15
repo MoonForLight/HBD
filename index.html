@@ -51,6 +51,10 @@
       box-shadow: 0 0 15px #fff, 0 0 30px #fff;
       transform: scale(1.05);
     }
+    canvas, #tsparticles {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      pointer-events: none; z-index: 1;
+    }
     .confetti {
       position: fixed;
       top: -2em;
@@ -65,6 +69,7 @@
       to { transform: translateY(100vh); opacity: 0; }
     }
 
+    /* Gift box */
     #gift-box {
       position: fixed;
       top: 50%;
@@ -95,6 +100,7 @@
       100% { transform: rotate(0deg); }
     }
 
+    /* Love explosion effect */
     .love {
       position: fixed;
       font-size: 4rem;
@@ -122,9 +128,29 @@
         opacity: 1;
       }
     }
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: white;
+      font-size: 1.2em;
+      animation: fall linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
+
+<canvas id="fireworks"></canvas>
+<div id="tsparticles"></div>
 
 <div class="container">
   <h1><span class="moon">🌙</span>Selamat Ulang Tahun!</h1>
@@ -133,18 +159,82 @@
   <div id="yt-wrapper"></div>
 </div>
 
-<!-- Kado -->
+<!-- Gift Box -->
 <div id="gift-box">
   <div class="box"></div>
 </div>
 
-<!-- JavaScript -->
+<!-- Particle.js -->
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.bundle.min.js"></script>
+<script>
+  tsParticles.load("tsparticles", {
+    fullScreen: { enable: true, zIndex: 1 },
+    particles: {
+      number: { value: 60 },
+      size: { value: 3, random: { min: 1, max: 4 } },
+      move: { enable: true, speed: 1 },
+      color: { value: "#ffffff" },
+      opacity: { value: 0.5 }
+    }
+  });
+</script>
+
+<!-- Fireworks -->
+<script>
+  const canvas = document.getElementById("fireworks"), ctx = canvas.getContext("2d");
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  let fireworks = [];
+  function Firework(x,y){this.x=x;this.y=y;this.p=[];for(let i=0;i<80;i++)this.p.push(new Particle(x,y))}
+  function Particle(x,y){
+    this.x=x;this.y=y;this.r=2;
+    this.color=`hsl(200,100%,80%)`;
+    this.sp=Math.random()*4;this.ang=Math.random()*2*Math.PI;
+    this.gr=0.04;this.a=1;
+  }
+  Particle.prototype.update=function(){
+    this.x+=Math.cos(this.ang)*this.sp;
+    this.y+=Math.sin(this.ang)*this.sp+this.gr;
+    this.a-=0.015;
+  };
+  function anim(){
+    ctx.fillStyle="rgba(0,0,0,0.1)";ctx.fillRect(0,0,canvas.width,canvas.height);
+    fireworks.forEach((fw,i)=>{
+      fw.p.forEach(p=>{
+        p.update();
+        ctx.globalAlpha=p.a;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,2*Math.PI);
+        ctx.fillStyle=p.color;ctx.fill();
+      });
+      if(fw.p[0].a<=0)fireworks.splice(i,1);
+    });
+    requestAnimationFrame(anim);
+  }
+  anim();
+  canvas.addEventListener("click", e=>fireworks.push(new Firework(e.clientX,e.clientY)));
+</script>
+
+<!-- Snow -->
+<script>
+  function createSnowflake() {
+    const flake = document.createElement("div");
+    flake.classList.add("snowflake");
+    flake.innerText = "❄";
+    flake.style.left = Math.random() * window.innerWidth + "px";
+    flake.style.animationDuration = 5 + Math.random() * 5 + "s";
+    flake.style.opacity = Math.random();
+    document.body.appendChild(flake);
+    setTimeout(() => flake.remove(), 10000);
+  }
+  setInterval(createSnowflake, 200);
+</script>
+
+<!-- Main Logic -->
 <script>
   function playAll() {
     const wrapper = document.getElementById("yt-wrapper");
-    wrapper.innerHTML = \`<iframe src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0" allow="autoplay" style="width:0;height:0;border:0;"></iframe>\`;
+    wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0" allow="autoplay" style="width:0;height:0;border:0;"></iframe>`;
 
-    // confetti
     for (let i = 0; i < 30; i++) {
       const c = document.createElement("div");
       c.className = "confetti";
@@ -164,8 +254,6 @@
 
     setTimeout(() => {
       box.style.display = "none";
-
-      // Hapus love sebelumnya (jika ada)
       const existing = document.querySelector(".love");
       if (existing) existing.remove();
 
