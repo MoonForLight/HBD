@@ -25,6 +25,12 @@
     button:hover {
       background-color: #ff4757;
     }
+
+    #yt-audio {
+      width: 0;
+      height: 0;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -32,9 +38,23 @@
   <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
   <p>Untuk <strong>[Nama Kamu]</strong></p>
   <p>Semoga bahagia selalu 💖</p>
-  <button onclick="document.getElementById('music').play()">Putar Musik 🎵</button>
 
-  <audio id="music" src="https://raw.githubusercontent.com/MoonForLight/HBD/main/wwd.mp3juice.blog%20-%20DJ%20KAKA%20MAIN%20SALAH%20DJ%20NONA%20PUN%20BELIS%20MAHAL%20KAKA%20MAIN%20SALAH%20VIRAL%20TIKTOK%20TERBARU%20YANG%20KALIAN%20CARI%20(320%20KBps).mp3" preload="auto"></audio>
+  <button onclick="playMusic()">Putar Musik 🎵</button>
+
+  <!-- Hidden YouTube audio iframe -->
+  <div id="yt-wrapper" style="display: none;">
+    <iframe id="yt-audio" src="" allow="autoplay" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    function playMusic() {
+      const yt = document.getElementById("yt-audio");
+      const videoId = "Zjc-o9W6fLk"; // ID dari YouTube video
+
+      yt.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}`;
+      document.getElementById("yt-wrapper").style.display = "block";
+    }
+  </script>
 
 </body>
 </html>
