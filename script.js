@@ -22,18 +22,30 @@ function showGiftExplosion() {
   setTimeout(() => {
     box.style.display = "none";
 
-    const existing = document.querySelector(".love");
-    if (existing) existing.remove();
+    // Emoji keluar dari kado
+    const emojis = ["🐯", "💜", "💫"];
+    emojis.forEach((char, i) => {
+      const el = document.createElement("div");
+      el.className = "emoji";
+      el.innerText = char;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+    });
 
-    const love = document.createElement("div");
-    love.className = "love";
-    love.innerText = "❤️";
-    document.body.appendChild(love);
-    setTimeout(() => love.remove(), 1500);
+    // Mainkan audio Taehyung
+    const taeAudio = document.getElementById("tae-audio");
+    if (taeAudio) taeAudio.play();
+
+    // Tampilkan quote Taehyung
+    const quote = document.createElement("div");
+    quote.className = "quote";
+    quote.innerText = `"Don’t be trapped in someone else’s dream." — Kim Taehyung`;
+    document.body.appendChild(quote);
+    setTimeout(() => quote.remove(), 4000);
   }, 2200);
 }
 
-// Snowflake effect
+// Salju jatuh
 function createSnowflake() {
   const flake = document.createElement("div");
   flake.classList.add("snowflake");
@@ -46,12 +58,11 @@ function createSnowflake() {
 }
 setInterval(createSnowflake, 200);
 
-// Fireworks effect
+// Fireworks
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
-
 let fireworks = [];
 
 function Firework(x, y) {
@@ -60,7 +71,6 @@ function Firework(x, y) {
   this.p = [];
   for (let i = 0; i < 80; i++) this.p.push(new Particle(x, y));
 }
-
 function Particle(x, y) {
   this.x = x;
   this.y = y;
@@ -71,7 +81,6 @@ function Particle(x, y) {
   this.gr = 0.04;
   this.a = 1;
 }
-
 Particle.prototype.update = function () {
   this.x += Math.cos(this.ang) * this.sp;
   this.y += Math.sin(this.ang) * this.sp + this.gr;
@@ -81,7 +90,6 @@ Particle.prototype.update = function () {
 function animate() {
   ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   fireworks.forEach((fw, i) => {
     fw.p.forEach(p => {
       p.update();
@@ -93,13 +101,11 @@ function animate() {
     });
     if (fw.p[0].a <= 0) fireworks.splice(i, 1);
   });
-
   requestAnimationFrame(animate);
 }
 animate();
 canvas.addEventListener("click", e => fireworks.push(new Firework(e.clientX, e.clientY)));
 
-// Particles background
 tsParticles.load("tsparticles", {
   fullScreen: { enable: true, zIndex: 1 },
   particles: {

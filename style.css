@@ -101,32 +101,45 @@ canvas, #tsparticles {
   100% { transform: rotate(0deg); }
 }
 
-.love {
+.emoji {
   position: fixed;
-  font-size: 4rem;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
-  animation: explodeLove 0.8s ease-out forwards;
+  font-size: 3rem;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: emojiFly 1s ease-out forwards;
   pointer-events: none;
   z-index: 999;
-  color: #ff5e8e;
-  text-shadow: 0 0 15px #fff;
 }
 
-@keyframes explodeLove {
-  0% {
-    transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
-    opacity: 0.5;
+@keyframes emojiFly {
+  to {
+    transform: translate(calc(-50% + 100px), calc(-50% - 150px)) rotate(720deg);
+    opacity: 0;
   }
-  50% {
-    transform: translate(-50%, -50%) scale(1.4) rotate(25deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1) rotate(10deg);
-    opacity: 1;
-  }
+}
+
+.quote {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px 25px;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #fff;
+  z-index: 999;
+  backdrop-filter: blur(8px);
+  animation: fadeInOut 4s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+  20% { opacity: 1; transform: translateX(-50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.1); }
 }
 
 .snowflake {
