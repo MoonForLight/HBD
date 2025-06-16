@@ -1,21 +1,4 @@
-function playAll() {
-  const wrapper = document.getElementById("yt-wrapper");
-  wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0" allow="autoplay" style="width:0;height:0;border:0;"></iframe>`;
-
-  for (let i = 0; i < 30; i++) {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.fontSize = (Math.random() * 10 + 10) + "px";
-    c.innerText = ["✨", "🎊", "🌟"][Math.floor(Math.random() * 3)];
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 3000);
-  }
-
-  showGiftExplosion();
-}
-
-function showGiftExplosion() {
+function triggerGift() {
   const box = document.getElementById("gift-box");
   box.style.display = "block";
 
@@ -32,7 +15,7 @@ function showGiftExplosion() {
       setTimeout(() => el.remove(), 1500);
     });
 
-    // Mainkan audio Taehyung
+    // Putar ucapan Taehyung
     const taeAudio = document.getElementById("tae-audio");
     if (taeAudio) taeAudio.play();
 
@@ -45,7 +28,7 @@ function showGiftExplosion() {
   }, 2200);
 }
 
-// Salju jatuh
+// Partikel salju dan kembang api
 function createSnowflake() {
   const flake = document.createElement("div");
   flake.classList.add("snowflake");
@@ -58,7 +41,6 @@ function createSnowflake() {
 }
 setInterval(createSnowflake, 200);
 
-// Fireworks
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;

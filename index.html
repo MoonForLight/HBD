@@ -12,11 +12,15 @@
 <canvas id="fireworks"></canvas>
 <div id="tsparticles"></div>
 
+<!-- Watermark Lagu -->
+<div id="watermark">
+  🎶 <strong>Winter Bear</strong> - V (Taehyung)
+</div>
+
 <div class="container">
   <h1><span class="moon">🌙</span>Selamat Ulang Tahun!</h1>
   <div id="typewriter">Semoga malammu tenang seperti cahaya bulan sabit ✨</div>
-  <button onclick="playAll()">Putar Musik & Kado 🎁</button>
-  <div id="yt-wrapper"></div>
+  <button onclick="triggerGift()">🎁 Buka Kado</button>
 </div>
 
 <!-- Gift Box -->
@@ -24,10 +28,17 @@
   <div class="box"></div>
 </div>
 
-<!-- Taehyung Audio (via .mp4) -->
+<!-- YouTube Music Autoplay -->
+<iframe
+  id="yt-music"
+  src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0"
+  style="width:0;height:0;border:0;"
+  allow="autoplay">
+</iframe>
+
+<!-- Audio ucapan Taehyung -->
 <video id="tae-audio" src="audio/taehyung-ucapan.mp4" preload="auto"></video>
 
-<!-- Library -->
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.bundle.min.js"></script>
 <script src="script.js"></script>
 
