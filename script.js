@@ -1,68 +1,112 @@
-function playMusic() {
-  const music = document.getElementById('music');
-  music.play();
+function playAll() {
+  const wrapper = document.getElementById("yt-wrapper");
+  wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/Zjc-o9W6fLk?autoplay=1&mute=0&loop=1&playlist=Zjc-o9W6fLk&rel=0" allow="autoplay" style="width:0;height:0;border:0;"></iframe>`;
+
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.fontSize = (Math.random() * 10 + 10) + "px";
+    c.innerText = ["✨", "🎊", "🌟"][Math.floor(Math.random() * 3)];
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+
+  showGiftExplosion();
 }
 
-// Fireworks Effect
+function showGiftExplosion() {
+  const box = document.getElementById("gift-box");
+  box.style.display = "block";
+
+  setTimeout(() => {
+    box.style.display = "none";
+
+    const existing = document.querySelector(".love");
+    if (existing) existing.remove();
+
+    const love = document.createElement("div");
+    love.className = "love";
+    love.innerText = "❤️";
+    document.body.appendChild(love);
+    setTimeout(() => love.remove(), 1500);
+  }, 2200);
+}
+
+// Snowflake effect
+function createSnowflake() {
+  const flake = document.createElement("div");
+  flake.classList.add("snowflake");
+  flake.innerText = "❄";
+  flake.style.left = Math.random() * window.innerWidth + "px";
+  flake.style.animationDuration = 5 + Math.random() * 5 + "s";
+  flake.style.opacity = Math.random();
+  document.body.appendChild(flake);
+  setTimeout(() => flake.remove(), 10000);
+}
+setInterval(createSnowflake, 200);
+
+// Fireworks effect
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 let fireworks = [];
 
 function Firework(x, y) {
   this.x = x;
   this.y = y;
-  this.particles = [];
-
-  for (let i = 0; i < 100; i++) {
-    this.particles.push(new Particle(x, y));
-  }
+  this.p = [];
+  for (let i = 0; i < 80; i++) this.p.push(new Particle(x, y));
 }
 
 function Particle(x, y) {
   this.x = x;
   this.y = y;
-  this.radius = 2;
-  this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-  this.speed = Math.random() * 5;
-  this.angle = Math.random() * 2 * Math.PI;
-  this.gravity = 0.05;
-  this.alpha = 1;
+  this.r = 2;
+  this.color = `hsl(200,100%,80%)`;
+  this.sp = Math.random() * 4;
+  this.ang = Math.random() * 2 * Math.PI;
+  this.gr = 0.04;
+  this.a = 1;
 }
 
 Particle.prototype.update = function () {
-  this.x += Math.cos(this.angle) * this.speed;
-  this.y += Math.sin(this.angle) * this.speed + this.gravity;
-  this.alpha -= 0.01;
+  this.x += Math.cos(this.ang) * this.sp;
+  this.y += Math.sin(this.ang) * this.sp + this.gr;
+  this.a -= 0.015;
 };
 
 function animate() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+  ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  fireworks.forEach((firework, index) => {
-    firework.particles.forEach((particle, i) => {
-      particle.update();
-      ctx.globalAlpha = particle.alpha;
+  fireworks.forEach((fw, i) => {
+    fw.p.forEach(p => {
+      p.update();
+      ctx.globalAlpha = p.a;
       ctx.beginPath();
-      ctx.arc(particle.x, particle.y, particle.radius, 0, 2 * Math.PI);
-      ctx.fillStyle = particle.color;
+      ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+      ctx.fillStyle = p.color;
       ctx.fill();
     });
-
-    if (firework.particles[0].alpha <= 0) {
-      fireworks.splice(index, 1);
-    }
+    if (fw.p[0].a <= 0) fireworks.splice(i, 1);
   });
 
   requestAnimationFrame(animate);
 }
-
-canvas.addEventListener("click", (e) => {
-  fireworks.push(new Firework(e.clientX, e.clientY));
-});
-
 animate();
+canvas.addEventListener("click", e => fireworks.push(new Firework(e.clientX, e.clientY)));
+
+// Particles background
+tsParticles.load("tsparticles", {
+  fullScreen: { enable: true, zIndex: 1 },
+  particles: {
+    number: { value: 60 },
+    size: { value: 3, random: { min: 1, max: 4 } },
+    move: { enable: true, speed: 1 },
+    color: { value: "#ffffff" },
+    opacity: { value: 0.5 }
+  }
+});
